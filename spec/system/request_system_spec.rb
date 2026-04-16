@@ -19,20 +19,6 @@ RSpec.describe "Requests", type: :system, js: true do
     })
   end
 
-        #   it 'filters cancelled requests' do
-        #   create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '17' }])
-
-        #   visit requests_path
-
-        #   expect(page).to have_css("table tbody tr", count: 1)
-
-        #   select('Cancelled', from: "filters[by_status]")
-        #   click_on 'Filter'
-
-        #   expect(page).to have_css("table tbody tr", count: 1)
-        #   expect(page).to have_content("Pending")
-        # end
-
   context "#index" do
     subject { requests_path }
 
@@ -105,6 +91,25 @@ RSpec.describe "Requests", type: :system, js: true do
           # check for filtered requests
           expect(page).to have_css("table tbody tr", count: 1)
         end
+
+        context 'when filtering by cancelled' do
+          # it 'displays only cancelled requests' do
+          #   create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '17' }])
+            
+          #   visit requests_path
+            
+          #   expect(page).to have_css("table tbody tr", count: 6)
+            
+          #   # select('Cancelled', from: "filters[by_status]")
+          #   # click_on 'Filter'
+            
+          #   expect(page).to have_css("table tbody tr", count: 1)
+          #   expect(page).to have_content("Cancelled")
+          # end
+
+          # it 'does not display the Cancel button' do
+          # end
+        end
       end
 
       context "when exporting as CSV" do
@@ -128,6 +133,7 @@ RSpec.describe "Requests", type: :system, js: true do
         end
       end
     end
+
     it_behaves_like "Date Range Picker", Request, :created_at
 
     it "doesn't display New Quantity Request link" do
