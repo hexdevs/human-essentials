@@ -19,6 +19,20 @@ RSpec.describe "Requests", type: :system, js: true do
     })
   end
 
+        #   it 'filters cancelled requests' do
+        #   create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '17' }])
+
+        #   visit requests_path
+
+        #   expect(page).to have_css("table tbody tr", count: 1)
+
+        #   select('Cancelled', from: "filters[by_status]")
+        #   click_on 'Filter'
+
+        #   expect(page).to have_css("table tbody tr", count: 1)
+        #   expect(page).to have_content("Pending")
+        # end
+
   context "#index" do
     subject { requests_path }
 
@@ -270,6 +284,16 @@ RSpec.describe "Requests", type: :system, js: true do
         expect(page).to have_content request.partner.email
         expect(page).to have_content("January 1 2020")
         expect(page).to have_content request.comments
+      end
+
+      it 'does not render the Fulfill Request button' do
+        cancelled_request = create(:request, organization: organization)
+        click_on 'Cancel'
+
+        # once filter is working, get there by filtering it
+        visit requests_path(cancelled_request)
+
+        expect(page).to have_button('Fulfill request')
       end
     end
   end

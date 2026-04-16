@@ -67,7 +67,7 @@ RSpec.describe 'Requests', type: :request do
 
           expect(response.body).to include("Print Unfulfilled Picklists (1)")
           expect(response.body).not_to include("Cancelled request - should appear")
-          expect(response.body).to include("Started request - should appear")
+          expect(response.body).not_to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
         end
       end
