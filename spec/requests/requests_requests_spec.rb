@@ -34,7 +34,7 @@ RSpec.describe 'Requests', type: :request do
           create(:request, :pending)
           create(:request, :started)
           create(:request, :fulfilled)
-          create(:request, :discarded)
+          create(:request, :cancelled)
 
           get requests_path
 
@@ -52,6 +52,21 @@ RSpec.describe 'Requests', type: :request do
           get requests_path({ filters: { by_status: :started} })
 
           expect(response.body).to include("Print Unfulfilled Picklists (1)")
+          expect(response.body).to include("Started request - should appear")
+          expect(response.body).not_to include("Pending request - should not appear")
+        end
+
+        it "shows cancelled requests" do
+          Request.delete_all
+
+          create(:request, :cancelled, comments: "Cancelled request - should appear")
+          create(:request, :started, comments: "Started request - should not appear")
+          create(:request, :pending, comments: "Pending request - should not appear")
+
+          get requests_path({ filters: { by_status: :cancelled} })
+
+          expect(response.body).to include("Print Unfulfilled Picklists (1)")
+          expect(response.body).not_to include("Cancelled request - should appear")
           expect(response.body).to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
         end

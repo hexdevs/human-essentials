@@ -253,7 +253,7 @@ RSpec.describe "Requests", type: :system, js: true do
         visit requests_path
       end
 
-      it 'should set the request as canceled/discarded and contain the reason' do
+      it 'should set the request as canceled and contain the reason' do
         click_on 'Cancel'
         fill_in 'Cancellation reason *', with: reason
         click_on 'Yes. Cancel Request'
