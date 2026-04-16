@@ -221,6 +221,19 @@ RSpec.describe "Requests", type: :system, js: true do
       expect(page).to have_content("334")
     end
 
+    context 'when the request has a cancelled status' do
+      it 'does not display the Cancel and Fulfill request buttons' do
+        cancelled_request =  create(:request, :with_item_requests, :cancelled, organization: organization) 
+        
+        visit request_path(cancelled_request.id)
+
+        expect(page).to have_content('Cancelled')
+        expect(page).not_to have_button('Cancel')
+        expect(page).not_to have_button('Fulfill request')
+        expect(page).to have_content('Print')
+      end
+    end
+
     context "change status request" do
       before do
         visit subject
