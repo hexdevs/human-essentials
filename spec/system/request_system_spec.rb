@@ -30,9 +30,16 @@ RSpec.describe "Requests", type: :system, js: true do
       create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '16' }])
     end
 
-    it "lists requests" do
+    it "lists requests that are not cancelled by default" do
+      create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '16' }])
+
       visit subject
+
       expect(page).to have_xpath("//h1", text: "Requests")
+      expect(page.find("table")).to have_content('Started', count: 3)
+      expect(page.find("table")).to have_content('Fulfilled', count: 1)
+      expect(page.find("table")).to have_content('Pending', count: 1)
+      expect(page.find("table")).not_to have_content("Cancelled")
     end
 
     it "can be exported in CSV" do

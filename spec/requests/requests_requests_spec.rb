@@ -34,7 +34,7 @@ RSpec.describe 'Requests', type: :request do
           create(:request, :pending)
           create(:request, :started)
           create(:request, :fulfilled)
-          create(:request, :discarded)
+          create(:request, :cancelled)
 
           get requests_path
 

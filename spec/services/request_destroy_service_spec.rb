@@ -37,7 +37,7 @@ RSpec.describe RequestDestroyService, type: :service do
       end
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
       it 'should send a email notification to the partner' do
@@ -51,7 +51,7 @@ RSpec.describe RequestDestroyService, type: :service do
       let(:request) { create(:request, partner: partner) }
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
       it 'should not send a email notification to the partner' do

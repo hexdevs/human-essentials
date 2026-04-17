@@ -11,7 +11,7 @@ class RequestDestroyService
 
     request.discarded_at = Time.current
     request.discard_reason = reason
-    request.status = :discarded
+    request.status = :cancelled
     request.save!
 
     unless request.partner.deactivated?
