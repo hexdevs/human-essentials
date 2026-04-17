@@ -3,19 +3,16 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    # todo: refactro this to a query object
-    @requests = if request_params[:include_cancelled]
+    @filterrific = initialize_filterrific(
       current_organization
-        .ordered_requests
-        .during(helpers.selected_range)
-        .class_filter(filter_params)
-    else
-      current_organization
-        .ordered_requests
-        .undiscarded
-        .during(helpers.selected_range)
-        .class_filter(filter_params)
-    end
+                .ordered_requests
+                .undiscarded
+                .during(helpers.selected_range),
+      params[:filterrific],
+      default_filter_params: {"include_cancelled" => 0}
+    ) || return
+
+    @requests = @filterrific.find
 
     @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).during(helpers.selected_range).class_filter(filter_params).count
     @paginated_requests = @requests.includes(:partner).page(params[:page])
@@ -103,7 +100,8 @@ class RequestsController < ApplicationController
 
   def request_params
     params.permit(
-      :include_cancelled
+      :include_cancelled,
+      filters: {}
     )
   end
 

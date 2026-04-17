@@ -43,6 +43,16 @@ class Request < ApplicationRecord
 
   include Filterable
 
+  filterrific(
+    available_filters: [
+      :include_cancelled
+    ]
+  )
+
+  scope :include_cancelled, ->(cancelled) {
+    return where(status: 3) if cancelled == 0
+    all
+  }
   # add request item scope to allow filtering distributions by request item
   scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
   # partner scope to allow filtering by partner

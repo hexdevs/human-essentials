@@ -35,7 +35,7 @@
           <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
-            <%= form_tag(requests_path, method: :get) do |f| %>
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
               <div class="row">
                 <% if @items.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -58,10 +58,16 @@
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= label_tag :include_cancelled, "Include Cancelled?" %>
-                  </br>
-                  <%= check_box_tag(:include_cancelled ) %>
+                  <%= f.label :include_cancelled, "Include Cancelled?"%>
+                  <%= f.check_box(
+                      :include_cancelled,
+                      class: 'filterrific-periodically-observed',
+                      style: 'display:block'
+                  ) %>
                 </div>
+              </div>
+              <div class="col-3">
+                <%= render_filterrific_spinner %>
               </div>
               </div>
               <div class="card-footer">
