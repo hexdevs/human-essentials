@@ -3,11 +3,20 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @requests = current_organization
-                .ordered_requests
-                .undiscarded
-                .during(helpers.selected_range)
-                .class_filter(filter_params)
+    # todo: refactro this to a query object
+    @requests = if request_params[:include_cancelled]
+      current_organization
+        .ordered_requests
+        .during(helpers.selected_range)
+        .class_filter(filter_params)
+    else
+      current_organization
+        .ordered_requests
+        .undiscarded
+        .during(helpers.selected_range)
+        .class_filter(filter_params)
+    end
+
     @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).during(helpers.selected_range).class_filter(filter_params).count
     @paginated_requests = @requests.includes(:partner).page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
@@ -91,6 +100,12 @@ class RequestsController < ApplicationController
   end
 
   private
+
+  def request_params
+    params.permit(
+      :include_cancelled
+    )
+  end
 
   helper_method \
     def filter_params
