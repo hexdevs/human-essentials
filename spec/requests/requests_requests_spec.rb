@@ -56,19 +56,36 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).not_to include("Pending request - should not appear")
         end
 
-        it "shows cancelled requests" do
-          Request.delete_all
+        context 'when by_status = cancelled and include_cancelled is given' do
+          it "displays cancelled requests" do
+            create(:request, :cancelled, comments: "Cancelled request - should appear")
+            create(:request, :started, comments: "Started request - should not appear")
+  
+            get requests_path(params: { filters: { by_status: :cancelled} }, include_cancelled: '1')
+  
+            expect(response.body).to include("Cancelled request - should appear")
+            expect(response.body).not_to include("Started request - should not appear")
+          end
+        end
 
-          create(:request, :cancelled, comments: "Cancelled request - should appear")
-          create(:request, :started, comments: "Started request - should not appear")
-          create(:request, :pending, comments: "Pending request - should not appear")
+        context 'when by_status = cancelled and include_cancelled is not given' do
+          it "does not display cancelled requests" do
+            create(:request, :cancelled, comments: "Cancelled request - should appear")
+  
+            get requests_path(params: { filters: { by_status: :cancelled} })
+  
+            expect(response.body).not_to include("Cancelled request - should appear")
+          end
+        end
 
-          get requests_path({ filters: { by_status: :cancelled} })
-
-          expect(response.body).to include("Print Unfulfilled Picklists (1)")
-          expect(response.body).not_to include("Cancelled request - should appear")
-          expect(response.body).not_to include("Started request - should appear")
-          expect(response.body).not_to include("Pending request - should not appear")
+        context 'when by_status = cancelled is not given and include_cancelled is given' do
+          it "does not display cancelled requests" do
+            create(:request, :cancelled, comments: "Cancelled request - should appear")
+  
+            get requests_path(params: { include_cancelled: '1' })
+  
+            expect(response.body).not_to include("Cancelled request - should appear")
+          end
         end
       end
     end
